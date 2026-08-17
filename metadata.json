@@ -1,0 +1,10 @@
+{
+  "name": "Idle Fade Throttle",
+  "description": "GNOME fades the screen to black over 10 seconds when the session goes idle. That fade is a full-screen translucent overlay, so every frame forces a full recomposite of the whole stage -- ~10 s of 100% CPU, even on a single internal display. This replaces the per-frame fade with a stepped one (default 3 steps: 33% / 66% / 100%): same duration, hundreds of times less CPU.",
+  "uuid": "idle-fade-throttle@rustyx.org",
+  "session-modes": ["user", "unlock-dialog"],
+  "shell-version": [
+    "50"
+  ],
+  "version": 1
+}
