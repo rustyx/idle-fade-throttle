@@ -9,19 +9,15 @@ Workaround for issue https://gitlab.gnome.org/GNOME/mutter/-/work_items/4979
 
 `ScreenShield.activate()` fades a full-screen black `Lightbox` in over
 `STANDARD_FADE_TIME` = 10000 ms (`js/ui/screenShield.js:45`). The overlay is
-*translucent* for the whole ramp, so nothing beneath it can be
-occlusion-culled and every frame recomposites the entire stage — once per
-frame, for ten seconds. On a 60 Hz panel that is on the order of 600 full
-recomposites: one core pinned for the full 10 seconds, on every blank.
-
-A single internal display is enough to trigger this. High refresh rate, large
-panels, fractional scaling and extra monitors all raise the cost, but none of
-them is required.
+*translucent* for the whole ramp, so nothing beneath it can be occlusion-culled
+and every frame recomposites the entire stage — once per frame, for ten seconds.
+The problem is that clutter frame clock dispatch keeps running over and over
+multiple times per display refresh cycle, recomposing over and over again.
 
 This extension keeps the fade and its duration but cuts its **frame rate**:
 it overrides `ScreenShield._activateFade()` and steps the lightbox opacity a
 fixed number of times across the fade (default 3: 33% / 66% / 100%, so a step
-every 3.33 s on the stock 10 s fade — 3 repaints instead of ~1650), then calls
+every 3.33 s on the stock 10 s fade — 3 repaints), then calls
 `lightbox.lightOn(0)` to snap to the final state so the `notify::active`
 handoff into `_onLongLightbox()` is unchanged.
 

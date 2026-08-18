@@ -37,6 +37,8 @@ export default class IdleFadeThrottleExtension extends Extension {
         };
     }
 
+    // Note, the fade should also be intercepted while on the lock screen, hence
+    // we need the `unlock-dialog` mode in addition to `user`.
     disable() {
         this._cancelTimer();
         if (this._shield) {
